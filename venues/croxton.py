@@ -5,34 +5,39 @@ from bs4 import BeautifulSoup
 # Making a GET request
 r = requests.get('http://affiliateapi.oztix.com.au/v1.9/JSRender.aspx?outlet_id=1495')
 
- 
 # Parsing the HTML
-soup = BeautifulSoup(r.content, 'html')
- 
+soup = BeautifulSoup(r.content, 'html.parser')
+
+
 s = soup.find_all("div", class_='JSRenderContainer')
+a = soup.find_all("a", class_='JSRenderEventTitle')
+hrefs = []
+for link in a:
+    hrefs.append('https:' + link['href'])
  
 gigs = []
 
 for each in s:
-    obj = { 
+    gig = { 
         "title": each.find(class_="JSRenderEventTitle").string,
         "description": "",
         "artists": [],
+        "venue": each.find(class_="JSRenderVenueName").string,
         "when": each.find(class_='JSRenderDate').string,
-        "link": each.link.string,
-        "sold_out": each.find('moshtix:soldout').string,
-        "genre": each.genre.string
+        "link": 'https:' + each.find(class_='JSRenderEventTitle')['href'],
+        "sold_out": "",
+        "genre": ""
     }
-    for artist in each.find('moshtix:artists'):
-        str = artist.string
-        if (str != "howler" and str != "hwlr" and str != "\n"):
-            obj["artists"].append(str)
-    gigs.append(obj)
+    title = each.find(class_="JSRenderEventTitle").string
+    supports = each.find(class_="JSRenderSpecialGuests").string or ""
+    gig["artists"].append(title)
+    gig["artists"].append(supports)
+    gigs.append(gig)
 
 print(gigs)
 
-with open("hwlr_test.js", "w") as j:
-    json.dump(gigs, j)  
+# with open("hwlr_test.js", "w") as j:
+#     json.dump(gigs, j)  
 
 # print(s)
 # t = open("test.txt", "a")

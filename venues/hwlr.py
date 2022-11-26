@@ -17,6 +17,7 @@ for each in s:
         "title": each.title.string,
         "description": each.description.string,
         "artists": [],
+        "venue": each.find('moshtix:venuetitle').string,
         "when": each.find('moshtix:eventstartdatetime').string,
         "link": each.link.string,
         "sold_out": each.find('moshtix:soldout').string,
