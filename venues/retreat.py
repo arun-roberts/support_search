@@ -1,6 +1,7 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 def gig_scraper(gigs_array):
     # Making a GET request
@@ -9,28 +10,28 @@ def gig_scraper(gigs_array):
     # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
 
-
     s = soup.select("div.summary-item-record-type-event")
-    
-    gigs = []
 
+    today = datetime.now()
+    
     for each in s:
         gig = { 
             "title": each.find(class_="summary-title-link").string,
             "description": "",
             "artists": [],
             "venue": "The Retreat, Brunswick",
-            "when": each.find(class_='summary-thumbnail-event-date-day').string + '' + each.find(class_='summary-thumbnail-event-date-month').string,
+            "when": "",
             "link": 'https://retreathotelbrunswick.squarespace.com' + each.find(class_='summary-title-link')['href'],
             "sold_out": "",
             "genre": ""
         }
-        title = each.find(class_="JSRenderEventTitle").string
-        supports = each.find(class_="JSRenderSpecialGuests").string or ""
-        gig["artists"].append(title)
-        gig["artists"].append(supports)
-        gigs.append(gig)
+        gig_date = each.find(class_='summary-thumbnail-event-date-day').string
+        if (int(gig_date) < 10):
+            gig_date = "0" + gig_date
+        gig_month = each.find(class_='summary-thumbnail-event-date-month').string
+        when_string = gig_date + ' ' + gig_month
+        year_string = "2022"
+        if (today.month > datetime.strptime(gig_month, '%b').month):
+            year_string = str(today.year + 1)
+        gig["when"] = str(datetime.strptime(year_string + " " + when_string, '%Y %d %b'))
         gigs_array.append(gig)
-    return gigs
-
-print(gig_scraper([]))
