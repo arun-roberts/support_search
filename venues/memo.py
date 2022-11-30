@@ -1,9 +1,8 @@
 import requests
-import json
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-def gig_scraper(gigs_array):
+def scrape_it(gigs_array):
     # Making a GET request
     r = requests.get('https://www.memomusichall.com.au/')
 
@@ -11,22 +10,25 @@ def gig_scraper(gigs_array):
     soup = BeautifulSoup(r.content, 'html.parser')
 
     s = soup.select("div.gig-inner")
-    print(s)
-    
+
+    del s[2]
+
     for each in s:
         gig = { 
-            "title": each.select("h2.text-center a")[0].string,
-            "description": each.select('div.gig-excerpt p')[0].string,
-            "artists": [each.select('h2.text-center a')[0].string, each.select('h4.gig-support-band-name')[0].string],
+            "title": each.select_one("div.gig-band-name a").string,
+            "description": each.select_one('div.gig-excerpt p').string,
+            "artists": [each.select('h2.text-center a')[0].string],
             "venue": "Memo Music Hall, St Kilda",
             "when": "",
-            "link": each.select('h2.text-center a')['href'],
-            "sold_out": "",
+            "link": each.select('h2.text-center a')[0]['href'],
             "genre": ""
         }
-        gig_date = each.select('gig-doors-open h2')[0].string.split()
+        gig_supports = each.select('h4.gig-support-band-name')
+        if (len(gig_supports) != 0):
+            gig["artists"].append(gig_supports[0].string)
+        gig_date = each.select('div.gig-doors-open h2')[0].string.split()
         gig_date.pop()
-        if (abs(gig_date[1]) < 10):
+        if (int(gig_date[1]) < 10):
             padded = '0' + gig_date[1]
             gig_date[1] = padded
         if (len(gig_date[3]) == 6):
@@ -34,5 +36,3 @@ def gig_scraper(gigs_array):
             gig_date[3] = pad_it
         gig["when"] = str(datetime.strptime(' '.join(gig_date), '%a %d %b, %I:%M%p'))
         gigs_array.append(gig)
-
-    gig_scraper([])

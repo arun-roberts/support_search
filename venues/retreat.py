@@ -1,9 +1,8 @@
 import requests
-import json
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-def gig_scraper(gigs_array):
+def scrape_it(gigs_array):
     # Making a GET request
     r = requests.get('https://retreathotelbrunswick.squarespace.com/music')
 
@@ -22,7 +21,6 @@ def gig_scraper(gigs_array):
             "venue": "The Retreat, Brunswick",
             "when": "",
             "link": 'https://retreathotelbrunswick.squarespace.com' + each.find(class_='summary-title-link')['href'],
-            "sold_out": "",
             "genre": ""
         }
         gig_date = each.find(class_='summary-thumbnail-event-date-day').string

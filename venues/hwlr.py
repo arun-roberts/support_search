@@ -1,5 +1,4 @@
 import requests
-import json
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -20,7 +19,6 @@ def scrape_it(gigs_array):
             "venue": each.find('moshtix:venuetitle').string,
             "when": "",
             "link": each.link.string,
-            "sold_out": each.find('moshtix:soldout').string,
             "genre": each.genre.string
         }
         when_string = each.find('moshtix:eventstartdatetime').string

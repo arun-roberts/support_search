@@ -1,5 +1,4 @@
 import requests
-import json
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -20,7 +19,6 @@ def scrape_it(gigs_array):
             "venue": each.find(class_="JSRenderVenueName").string,
             "when": "",
             "link": 'https:' + each.find(class_='JSRenderEventTitle')['href'],
-            "sold_out": "",
             "genre": ""
         }
         title = each.find(class_="JSRenderEventTitle").string

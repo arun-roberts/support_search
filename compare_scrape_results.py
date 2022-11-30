@@ -13,7 +13,7 @@ with open("new_scrape_results.json", "r") as new_results:
 today = datetime.now()
 
 for gig in prev:
-    if (gig["when"] and datetime.strptime(gig["when"], "%Y-%m-%d %H:%M:%S" < today)):
+    if (gig["when"] and datetime.strptime(gig["when"], "%Y-%m-%d %H:%M:%S") < today):
         prev.remove(gig)
 
 for each in new:
@@ -22,6 +22,9 @@ for each in new:
         if(each["title"] == old["title"]):
             unlisted = False
     if (unlisted == True):
+        each["new"] = True
+        each["applied"] = False
+        each["uninterested"] = False
         prev.append(each)
 
 as_obj = { "data": prev }
