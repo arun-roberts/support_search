@@ -1,9 +1,9 @@
 import json
-import retreat 
-import croxton 
-import hwlr
-import memo
-import wesley_anne
+import venues.retreat as retreat 
+import venues.croxton as croxton 
+import venues.hwlr as hwlr
+import venues.memo as memo
+import venues.wesley_anne as wesley_anne
 
 def scrape_it_all():
     gigs = []
