@@ -15,22 +15,25 @@ def scrape_it(gigs_array):
 
     for each in s:
         gig = { 
-            "title": each.find(class_="heading-4").string,
+            "title": each.find(class_="heading-4"),
             "description": "",
-            "artists": [each.find(class_="heading-4").string],
+            "artists": [each.find(class_="heading-4")],
             "venue": "The Curtin, Carlton",
             "when": "",
-            "link": 'https://wesleyanne.com.au' + each.find(class_='eventlist-title-link')['href'],
+            "link": each.select('a[href]')[0]['href'],
             "genre": ""
         }
-        supports = each.find(class_="heading-4")
+        supports = each.find(class_="heading-5")
         if (supports != None):
             gig["artists"].append(supports.string)
         when_arr = ' '.split(each.find(class_='date').string)
         when_string = when_arr[0] + ' ' + when_arr[1] + ' ' + when_arr[2]
         year_string = "2022"
-        if (today.month > datetime.strptime(gig_month, '%b').month):
+        if (today.month > datetime.strptime(when_arr[2], '%B').month):
             year_string = str(today.year + 1)
-        gig["when"] = str(datetime.strptime(when_string, '%A, %d %B %Y %H:%M'))
+        gig["when"] = str(datetime.strptime(when_string + ' ' + year_string, '%A, %d %B %Y'))
         gigs_array.append(gig)
+    print(gigs_array)
+
+scrape_it([])
 
