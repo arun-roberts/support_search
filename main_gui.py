@@ -19,7 +19,7 @@ ttk.Label(title_frame, text="Scrape it.")
 info_body = ttk.Frame(root, padding=15)
 info_body.grid()
 for i, gig in enumerate(prev):
-    ttk.Label(info_body, text=gig.title).grid(column=1, row=i)
+    ttk.Label(info_body, text=gig["title"]).grid(column=1, row=i)
     ttk.Button(info_body, text="Go fish", command=fish).grid(column=3, row=i)
     ttk.Button(info_body, text="Applied", command=checkItOff).grid(column=4, row=i)
     ttk.Button(info_body, text="No", command=getOutOfHere).grid(column=5, row=i)
