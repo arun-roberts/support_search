@@ -4,31 +4,29 @@ from datetime import datetime
 
 def scrape_it(gigs_array):
     # Making a GET request
-    r = requests.get('https://www.thenightcat.com.au/shows')
+    r = requests.get('https://moshtix.com.au/mosh2/rss/GenerateFeed.aspx?feedCode=637522902352681726')
     
     # Parsing the XML
-    soup = BeautifulSoup(r.content, 'html')
-    
-    s = soup.select('gig-individual-wrapper')
+    soup = BeautifulSoup(r.content, 'xml')
 
-    today = datetime.now()
-    
+    s = soup.find_all('item')
+
     for each in s:
         gig = { 
-            "title": each.find(class_="gig-title").string,
-            "description": "",
+            "title": each.title.string,
+            "description": each.description.string,
             "artists": [],
-            "venue": "The Nightcat",
+            "venue": each.find('moshtix:venuetitle').string,
             "when": "",
-            "link": each.find(class_="gig-title")["href"].string,
-            "genre": ""
+            "link": each.link.string,
+            "genre": each.genre.string
         }
-        supports = each.find(class_="gig-guests").string
-        if (supports != None and len(supports) > 0):
-            gig["artists"].append(supports)
-        when_string = each.find(class_='gig-date').string
-        gig["when"] = str(datetime.strptime(when_string, '%A %d %B %Y'))
-        gigs_array.append(gig)
+        when_string = each.find('moshtix:eventstartdatetime').string
+        gig["when"] = str(datetime.strptime(when_string, '%a, %d %b %Y %H:%M'))
+        for artist in each.find('moshtix:artists'):
+            art = artist.string
+            if (art != "The Night Cat" and art != "\n"):
+                gig["artists"].append(art)
         print(gig)
         
 scrape_it([])
